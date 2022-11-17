@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.blogsystem.mapper.ArtUserLikeMapper">
+
+
+    <select id="queryUserLike" resultType="boolean">
+        select count(*) from blog_article_like_list
+        where articleId = #{articleId} and uid = #{uid}
+    </select>
+
+    <delete id="deleteUserLike">
+        delete from blog_article_like_list
+        where articleId = #{articleId} and uid = #{uid}
+    </delete>
+</mapper>

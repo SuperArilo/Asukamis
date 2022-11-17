@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.admin.mapper.AdminBlogArticleMapper">
+    <resultMap id="adminBlogArticle" type="com.superarilo.admin.vo.AdminBlogArticleVo">
+        <id property="articleId" column="id"/>
+        <result property="author" column="author"/>
+        <result property="createTime" column="createTime"/>
+        <result property="articleTitle" column="articleTitle"/>
+        <result property="articleIntroduction" column="articleIntroduction"/>
+        <result property="articleViews" column="articleViews"/>
+        <result property="articleLikes" column="articleLikes"/>
+        <result property="articleCommentNum" column="articleCommentNum"/>
+    </resultMap>
+    <select id="aQueryBlogArticle" resultMap="adminBlogArticle">
+        select
+            ba.id,
+            bum.nickName as author,
+            ba.createTime,
+            ba.articleTitle,
+            ba.articleIntroduction,
+            ba.articleViews,
+            (select count(*) from blog_article_like_list as ball where ball.articleId = ba.id) as articleLikes,
+            (select count(*) from blog_article_comment as bac where ba.id = bac.articleId) as articleCommentNum
+        from blog_article as ba
+        left join blog_user_means as bum on ba.publisher = bum.uid
+        <where>
+            <if test="aTitle != null and aTitle != ''">
+                ba.articleTitle like concat('%', #{aTitle}, '%')
+            </if>
+            <if test="beforeTime != null and beforeTime != ''">
+                and ba.createTime <![CDATA[ >= ]]> CAST(CONCAT(#{beforeTime},' 00:00:00') AS datetime)
+            </if>
+            <if test="afterTime != null and afterTime != ''">
+                and ba.createTime <![CDATA[ <= ]]> CAST(CONCAT(#{afterTime},' 23:59:59') AS datetime)
+            </if>
+        </where>
+        order by ba.createTime desc
+    </select>
+
+    <select id="aQueryBlogArticleById" resultType="java.util.Map">
+        select
+            ba.id,
+            ba.publisher,
+            DATE_FORMAT(ba.createTime, '%Y-%m-%d') as createTime,
+            ba.createTime,
+            ba.articleTitle,
+            ba.articleIntroduction,
+            ba.articleContent,
+            ba.articleViews,
+            (select count(*) from blog_article_like_list as ball where ball.articleId = ba.id) as articleLikes,
+            ba.articlePicture,
+            bum.nickName,
+            bum.avatar
+        from blog_article as ba
+        left join blog_user_means as bum on ba.publisher = bum.uid
+        where ba.id = #{artId}
+    </select>
+
+    <update id="aUpdateBlogArticle">
+        <if test="id != null and id != ''">
+            update blog_article as ba set
+            <trim suffixOverrides=",">
+                <if test="title != null and title != ''">
+                    ba.articleTitle = #{title} ,
+                </if>
+                <if test="introduction != null and introduction != ''">
+                    ba.articleIntroduction = #{introduction} ,
+                </if>
+                <if test="content != null and content != ''">
+                    ba.articleContent = #{content} ,
+                </if>
+                <if test="picture != null and picture != ''">
+                    ba.articlePicture = #{picture}
+                </if>
+            </trim>
+            where ba.id = #{id}
+        </if>
+    </update>
+
+    <select id="aQueryIsHaveArticle" resultType="boolean">
+        select count(*) from blog_article where id = #{articleId}
+    </select>
+</mapper>

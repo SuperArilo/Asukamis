@@ -1,0 +1,71 @@
+spring:
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  data:
+    redis:
+      repositories:
+        enabled: false
+  redis:
+    host: localhost  #配置redis的主机地址，需要修改成自己的
+    database: 0
+    port: 6379
+    password: redis123456
+    jedis:
+      pool:
+        max-active: 50 # 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool 的状态为exhausted(耗尽)
+        max-idle: 20 # 连接池中的最大空闲连接，默认值也是8。
+        min-idle: 5  # 连接池中的最小空闲连接，默认值也是0。
+        # max-wait: 5 # 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接 抛出JedisConnectionException
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/blog?useUnicode=true&character_set_server=utf8mb4&serverTimezone=Asia/Shanghai
+    username: root
+    password: 728152568
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    throw-exception-if-no-handler-found: true
+uid:
+  epochStr: 2022-08-02
+  # 时间位, 默认:30
+  timeBits: 8
+  # 机器位, 默认:16
+  workerBits: 4
+  # 序列号, 默认:7
+  seqBits: 2
+  # 是否容忍时钟回拨, 默认:true
+  enableBackward: true
+  # RingBuffer size扩容参数, 可提高UID生成的吞吐量, 默认:3
+  CachedUidGenerator:
+    boostPower: 1
+    # 指定何时向RingBuffer中填充UID, 取值为百分比(0, 100), 默认为50
+    paddingFactor: 50
+mybatis-plus:
+  mapper-locations: classpath:mapper/default/*.xml, classpath:mapper/admin/*.xml
+  type-aliases-package: com.superarilo.blogsystem.entity, com.superarilo.blogsysmte.vo, com.superarilo.admin.entity, com.superarilo.admin.vo
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  port: 3090
+  #  ssl:
+  #    key-store: classpath:5670151_superarilo.icu.jks
+  #    enabled: true
+  #    key-store-password: saP88oIo
+  #    keyStoreType: JKS
+  error:
+    include-exception: true
+custom-property:
+  default-avatar: 'http://localhost:3090/image/default-head.jpg'
+

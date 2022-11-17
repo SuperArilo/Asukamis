@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.blogsystem.mapper.BlogUserMapper">
+    <select id="queryHaveUser" resultType="java.util.Map">
+        select * from blog_user where email = #{email}
+    </select>
+
+    <select id="loginUser" resultType="java.util.Map">
+        select
+            bu.uid,
+            bu.email,
+            DATE_FORMAT(bu.registerTime, '%Y-%m-%d') as registerTime,
+            bum.avatar,
+            bum.nickName,
+            bum.age,
+            bum.sex,
+            bum.autograph,
+            bus.status
+        from blog_user as bu
+        left join blog_user_means as bum
+        on bu.uid = bum.uid
+        left join blog_user_status bus on bum.uid = bus.uid
+        where
+        <if test="email != null and email != ''">
+            bu.email = #{email} and
+        </if>
+        <if test="uid != null">
+            bu.uid = #{uid} and
+        </if>
+        bu.password = #{password} and bus.uid = bu.uid
+    </select>
+
+    <select id="queryHaveUserByUID" resultType="java.lang.Boolean">
+        select count(*) from blog_user where uid = #{uid}
+    </select>
+</mapper>

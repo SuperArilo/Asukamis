@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.mapper.BlogGossipLikeMapper">
+
+    <select id="queryUserIsLike" resultType="boolean">
+        select count(*) from blog_gossip_like_list as bgll
+        where bgll.gossipId = #{gossipId} and bgll.uid = #{uid}
+    </select>
+</mapper>

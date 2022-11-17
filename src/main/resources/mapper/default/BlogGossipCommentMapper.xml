@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.mapper.BlogGossipCommentMapper">
+    <resultMap id="commentMap" type="java.util.Map">
+        <id property="commentId" column="commentId"/>
+        <result property="gossipId" column="gossipId"/>
+        <result property="content" column="content"/>
+        <result property="createTime" column="createTime"/>
+        <result property="likes" column="likes"/>
+        <association property="replyUser" javaType="java.util.Map">
+            <id property="replyUserId" column="replyUserId"/>
+            <result property="replyNickName" column="replyNickName"/>
+            <result property="replyAvatar" column="replyAvatar"/>
+        </association>
+        <association property="byReplyUser" javaType="java.util.Map">
+            <id property="byReplyUserId" column="byReplyUserId"/>
+            <id property="byReplyName" column="byReplyName"/>
+            <id property="byReplyAvatar" column="byReplyAvatar"/>
+        </association>
+    </resultMap>
+    <select id="commentList" resultMap="commentMap">
+        select
+            bgc.commentId,
+            bgc.gossipId,
+            bgc.createTime,
+            bgc.content,
+            (select count(*) from blog_gossip_comment_like_list as bgcll where bgcll.commentId = bgc.commentId) as likes,
+            reply_user.uid as replyUserId,
+            reply_user.nickName as replyNickName,
+            reply_user.avatar as replyAvatar,
+            by_reply_user.uid as byReplyUserId,
+            by_reply_user.nickName as byReplyName,
+            by_reply_user.avatar as byReplyAvatar
+        from blog_gossip_comment as bgc
+        left join blog_user_means as reply_user on bgc.replyUser = reply_user.uid
+        left join blog_user_means as by_reply_user on by_reply_user.uid = bgc.byReplyUser
+        where bgc.gossipId = #{gossipId}
+        order by bgc.createTime desc
+    </select>
+
+    <select id="queryGossipCommentIsHave" resultType="boolean">
+        select count(*) from blog_gossip_comment as bgc
+        where bgc.gossipId = #{gossipId}
+        <if test="commentId != null and replyUserId != null">
+            and bgc.commentId = #{commentId}
+            and bgc.replyUser = #{replyUserId}
+        </if>
+    </select>
+</mapper>

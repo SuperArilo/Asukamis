@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.superarilo.admin.mapper.AdminBlogUserMapper">
+
+    <resultMap id="adminBlogUser" type="com.superarilo.admin.vo.AdminBlogUserVo">
+        <id property="uid" column="uid"/>
+        <result property="nickName" column="nickName"/>
+        <result property="email" column="email"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="autograph" column="autograph"/>
+        <result property="registerTime" column="registerTime"/>
+        <result property="status" column="status"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="category" column="category"/>
+    </resultMap>
+    <select id="queryBlogUser" resultMap="adminBlogUser">
+        select
+            bu.uid,
+            bum.nickName,
+            bu.email,
+            bum.sex,
+            bum.age,
+            bum.avatar,
+            bum.autograph,
+            bus.status,
+            bu.registerTime,
+            buc.category,
+            buc.categoryName
+        from blog_user as bu
+        inner join blog_user_means as bum on bu.uid = bum.uid
+        inner join blog_user_status as bus on bum.uid = bus.uid
+        inner join blog_user_class as buc on bu.category = buc.category
+        <where>
+            <if test="uid != null">
+                bu.uid like concat('%', #{uid}, '%')
+            </if>
+            <if test="nickName != null and nickName != ''">
+                or bum.nickName like concat('%', #{nickName}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                and bu.email like concat('%', #{email}, '%')
+            </if>
+            <if test="status != null">
+                and bus.status = #{status}
+            </if>
+            <if test="category != null">
+                and bu.category = #{category}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteBlogUser">
+        delete blog_user, blog_user_means, blog_user_status from blog_user , blog_user_means, blog_user_status where blog_user.uid in
+        <foreach collection="uidList" index="index" item="item" open="(" close=")" separator=",">
+            (#{item})
+        </foreach>
+        and blog_user_means.uid in
+        <foreach collection="uidList" index="index" item="item" open="(" close=")" separator=",">
+            (#{item})
+        </foreach>
+        and blog_user_status.uid in
+        <foreach collection="uidList" index="index" item="item" open="(" close=")" separator=",">
+            (#{item})
+        </foreach>
+    </delete>
+
+    <update id="updateBlogUserInfo">
+        update blog_user as bu , blog_user_means as bum , blog_user_status as bus set
+        <trim suffixOverrides=",">
+            <if test="email != null and email != ''">
+                bu.email = #{email} ,
+            </if>
+            <if test="nickName != null and nickName != ''">
+                bum.nickName = #{nickName} ,
+            </if>
+            <if test="sex != null">
+                bum.sex = #{sex} ,
+            </if>
+            <if test="age != null">
+                bum.age = #{age} ,
+            </if>
+            <if test="autograph != null and autograph != ''">
+                bum.autograph = #{autograph} ,
+            </if>
+            <if test="status != null">
+                bus.status = #{status},
+            </if>
+            <if test="category !=null">
+                bu.category = #{category}
+            </if>
+        </trim>
+        where bu.uid = #{uid} and bum.uid = #{uid} and bus.uid = #{uid}
+    </update>
+
+    <select id="queryIsHaveUser" resultType="boolean">
+        select count(*) from blog_user where uid = #{uid}
+    </select>
+</mapper>
