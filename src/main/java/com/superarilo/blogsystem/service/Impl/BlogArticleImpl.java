@@ -44,6 +44,7 @@ public class BlogArticleImpl implements BlogArticleService {
 
     @Override
     public JsonResult getBlogArticleContent(Long articleId, HttpServletRequest request) {
+        if(!blogArticleMapper.increaseArticleView(articleId)) return JsonResult.Error(400, "服务器没有查询到此文章的id");
         String token = request.getHeader("token");
         Long tokenUid;
         if (token == null || token.equals("") || !JwtUtils.verify(token, InputCheck.tokenSecret)){
@@ -51,7 +52,6 @@ public class BlogArticleImpl implements BlogArticleService {
             return JsonResult.OK("查询成功", blogArticleMapper.selectBlogArticleContent(articleId, tokenUid));
         }
         tokenUid = JWT.decode(token).getClaim("uid").asLong();
-        if(!blogArticleMapper.increaseArticleView(articleId)) return JsonResult.Error(400, "服务器没有查询到此文章的id");
         return JsonResult.OK("查询成功", blogArticleMapper.selectBlogArticleContent(articleId, tokenUid));
     }
 
