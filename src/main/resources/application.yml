@@ -33,6 +33,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 uid:
   epochStr: 2022-08-02
   # 时间位, 默认:30

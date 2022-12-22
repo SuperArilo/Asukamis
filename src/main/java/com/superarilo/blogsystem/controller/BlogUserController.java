@@ -27,8 +27,7 @@ public class BlogUserController {
     public JsonResult blogUserLogin(@RequestParam(value = "email", required = false) String email,
                                     @RequestParam(value = "password", required = false) String password,
                                     @RequestParam(value = "uid", required = false) Long uid,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response){
+                                    HttpServletRequest request){
         return blogUserService.loginUserByNormal(email, password, uid, request);
     }
 }
