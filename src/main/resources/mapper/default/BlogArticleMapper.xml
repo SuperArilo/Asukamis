@@ -12,7 +12,21 @@
             ba.articleViews,
             ba.articlePicture,
             (select count(*) from blog_article_comment as bac where bac.articleId = ba.id) as commentTotal
-        from blog_article as ba order by ba.id desc
+        from blog_article as ba
+        <if test="keywords == null or keywords == ''">
+            group by ba.id, ba.articleViews
+        </if>
+        order by
+        <trim prefixOverrides=",">
+            <choose>
+                <when test="keywords == null or keywords == ''">
+                    ba.id desc
+                </when>
+                <when test="keywords == 'hot'">
+                    , ba.articleViews DESC, articleLikes DESC, commentTotal DESC
+                </when>
+            </choose>
+        </trim>
     </select>
     <resultMap id="articleContent" type="com.superarilo.blogsystem.vo.BlogArticleContentVO">
         <id property="id" column="id"/>

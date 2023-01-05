@@ -31,7 +31,7 @@ public class BlogArticleImpl implements BlogArticleService {
     @Override
     public PageCustom<Map<String, Object>> getBlogArticleList(Integer pageNum, Integer pageSize, String keyword, HttpServletRequest request) {
         String token = request.getHeader("token");
-        Page<Map<String, Object>> blogArticlePage = blogArticleMapper.selectBlogArticleList(new Page<>(pageNum, pageSize));
+        Page<Map<String, Object>> blogArticlePage = blogArticleMapper.selectBlogArticleList(new Page<>(pageNum, pageSize), keyword);
         List<Map<String, Object>> articleList = blogArticlePage.getRecords();
         if (token == null || token.equals("") || !JwtUtils.verify(token, InputCheck.tokenSecret)) return new PageCustom<>(blogArticlePage.getTotal(), articleList, blogArticlePage.getPages(), blogArticlePage.getCurrent(), blogArticlePage.getSize());
         Long uid = JWT.decode(token).getClaim("uid").asLong();
