@@ -3,15 +3,14 @@ package com.superarilo.blogsystem.service.Impl;
 import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.superarilo.blogsystem.service.BlogGossipService;
+import com.superarilo.entity.GossipLike;
 import com.superarilo.mapper.BlogGossipLikeMapper;
 import com.superarilo.mapper.BlogGossipMapper;
-import com.superarilo.utils.InputCheck;
-import com.superarilo.utils.JwtUtils;
-import com.superarilo.utils.PageCustom;
-import com.superarilo.utils.TimeFormat;
+import com.superarilo.utils.*;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,5 +40,27 @@ public class BlogGossipImpl implements BlogGossipService {
             }
         }
         return new PageCustom<>(dataPage.getTotal(), dataList, dataPage.getPages(), dataPage.getCurrent(), dataPage.getSize());
+    }
+
+    @Override
+    public JsonResult gossipLike(Long gossipId, HttpServletRequest request) {
+        Long uid = JWT.decode(request.getHeader("token")).getClaim("uid").asLong();
+        Map<String, Boolean> likeStatus = new HashMap<>();
+        if(blogGossipLikeMapper.queryUserIsLike(gossipId, uid)) {
+            if(blogGossipLikeMapper.cancelLikeGossip(gossipId, uid)) {
+                likeStatus.put("status", false);
+                return JsonResult.OK("取消喜欢了咯 (´。＿。｀)", likeStatus);
+            } else {
+                likeStatus.put("status", false);
+                return JsonResult.Error(400, "没有找到记录", likeStatus);
+            }
+        } else {
+            GossipLike gossipLike = new GossipLike();
+            gossipLike.setGossipId(gossipId);
+            gossipLike.setUid(uid);
+            blogGossipLikeMapper.insert(gossipLike);
+            likeStatus.put("status", true);
+            return JsonResult.OK("喜欢成功，感谢你的点赞 (○｀ 3′○)", likeStatus);
+        }
     }
 }

@@ -14,8 +14,9 @@
         </association>
         <association property="byReplyUser" javaType="java.util.Map">
             <id property="byReplyUserId" column="byReplyUserId"/>
-            <id property="byReplyName" column="byReplyName"/>
-            <id property="byReplyAvatar" column="byReplyAvatar"/>
+            <result property="byReplyName" column="byReplyName"/>
+            <result property="byReplyAvatar" column="byReplyAvatar"/>
+            <result property="byReplyCommentId" column="byReplyCommentId"/>
         </association>
     </resultMap>
     <select id="commentList" resultMap="commentMap">
@@ -24,6 +25,7 @@
             bgc.gossipId,
             bgc.createTime,
             bgc.content,
+            bgc.byReplyCommentId,
             (select count(*) from blog_gossip_comment_like_list as bgcll where bgcll.commentId = bgc.commentId) as likes,
             reply_user.uid as replyUserId,
             reply_user.nickName as replyNickName,
@@ -46,4 +48,14 @@
             and bgc.replyUser = #{replyUserId}
         </if>
     </select>
+
+    <delete id="deleteCommentById">
+        delete blog_gossip_comment, blog_gossip_comment_like_list from blog_gossip_comment
+        left join blog_gossip_comment_like_list
+        on blog_gossip_comment.commentId = blog_gossip_comment_like_list.commentId
+        and blog_gossip_comment.replyUser = blog_gossip_comment_like_list.uid
+        and blog_gossip_comment.gossipId = #{gossipId}
+        where blog_gossip_comment.commentId = #{commentId}
+        and blog_gossip_comment.replyUser = #{uid}
+    </delete>
 </mapper>

@@ -9,4 +9,6 @@ import org.apache.ibatis.annotations.Param;
 public interface BlogGossipCommentLikeMapper extends BaseMapper<GossipCommentLike> {
     boolean queryUserIsLike(@Param("commentId") Long commentId,
                             @Param("uid") Long uid);
+    boolean cancelLikeComment(@Param("commentId") Long commentId,
+                              @Param("uid") Long uid);
 }

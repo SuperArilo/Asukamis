@@ -15,4 +15,7 @@ public interface BlogGossipCommentMapper extends BaseMapper<GossipComment> {
     boolean queryGossipCommentIsHave(@Param("gossipId") Long gossipId,
                                      @Param("commentId") Long replyCommentId,
                                      @Param("replyUserId") Long replyUserId);
+    boolean deleteCommentById(@Param("gossipId") Long gossipId,
+                              @Param("commentId") Long commentId,
+                              @Param("uid") Long uid);
 }

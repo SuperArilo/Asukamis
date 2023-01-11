@@ -6,4 +6,9 @@
         select count(*) from blog_gossip_like_list as bgll
         where bgll.gossipId = #{gossipId} and bgll.uid = #{uid}
     </select>
+
+    <delete id="cancelLikeGossip">
+        delete from blog_gossip_like_list
+        where gossipId = #{gossipId} and uid = #{uid}
+    </delete>
 </mapper>

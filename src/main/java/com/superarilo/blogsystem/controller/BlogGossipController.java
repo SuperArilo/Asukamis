@@ -2,10 +2,7 @@ package com.superarilo.blogsystem.controller;
 
 import com.superarilo.blogsystem.service.BlogGossipService;
 import com.superarilo.utils.JsonResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,5 +19,10 @@ public class BlogGossipController {
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                                     HttpServletRequest request){
         return JsonResult.OK("请求成功", blogGossipService.gossipListGet(pageNum, pageSize, request));
+    }
+    @PutMapping("/like")
+    public JsonResult gossipLike(@RequestParam("gossipId") Long gossipId,
+                                 HttpServletRequest request){
+        return blogGossipService.gossipLike(gossipId, request);
     }
 }

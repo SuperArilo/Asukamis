@@ -3,12 +3,12 @@
 <mapper namespace="com.superarilo.mapper.BlogCommentLikeMapper">
 
     <select id="queryUserIsLikeComment" resultType="boolean">
-        select count(*) from blog_comment_like_list as bcll
+        select count(*) from blog_article_comment_like_list as bcll
         where bcll.commentId = #{commentId} and bcll.uid = #{uid}
     </select>
 
     <delete id="cancelLikeComment">
-        delete from blog_comment_like_list
+        delete from blog_article_comment_like_list
         where commentId = #{commentId} and uid = #{uid}
     </delete>
 </mapper>

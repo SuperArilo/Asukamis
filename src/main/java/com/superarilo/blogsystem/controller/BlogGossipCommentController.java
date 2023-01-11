@@ -30,4 +30,16 @@ public class BlogGossipCommentController {
                                     HttpServletRequest request){
         return blogGossipCommentService.createComment(gossipId, content, replyCommentId, replyUserId, request);
     }
+    @DeleteMapping("/delete")
+    public JsonResult gossipCommentDelete(@RequestParam("gossipId") Long gossipId,
+                                          @RequestParam("commentId") Long commentId,
+                                          HttpServletRequest request) {
+        return blogGossipCommentService.deleteGossipCommentById(gossipId, commentId, request);
+    }
+    @PutMapping("/like")
+    public JsonResult gossipCommentLike(@RequestParam("gossipId") Long gossipId,
+                                        @RequestParam("commentId") Long commentId,
+                                        HttpServletRequest request) {
+        return blogGossipCommentService.commentLike(gossipId, commentId, request);
+    }
 }

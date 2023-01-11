@@ -5,4 +5,9 @@
         select count(*) from blog_gossip_comment_like_list as bgcll
         where bgcll.commentId = #{commentId} and bgcll.uid = #{uid}
     </select>
+
+    <delete id="cancelLikeComment">
+        delete from blog_gossip_comment_like_list
+        where commentId = #{commentId} and uid = #{uid}
+    </delete>
 </mapper>
