@@ -16,8 +16,10 @@ public class GossipComment {
     private Long gossipId;
     @TableField(value = "replyUser")
     private Long replyUser;
-    @TableField(value = "beReplyUser")
+    @TableField(value = "byReplyUser")
     private Long beReplyUser;
+    @TableField(value = "byReplyCommentId")
+    private Long byReplyCommentId;
     @TableField(value = "createTime")
     private Date createTime;
     @TableField(value = "content")

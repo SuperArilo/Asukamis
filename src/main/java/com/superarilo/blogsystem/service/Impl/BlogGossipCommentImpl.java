@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.superarilo.blogsystem.mapper.BlogUserMapper;
 import com.superarilo.blogsystem.service.BlogGossipCommentService;
 import com.superarilo.entity.GossipComment;
+import com.superarilo.entity.GossipCommentLike;
 import com.superarilo.mapper.BlogGossipCommentLikeMapper;
 import com.superarilo.mapper.BlogGossipCommentMapper;
 import com.superarilo.mapper.BlogGossipMapper;
@@ -13,6 +14,7 @@ import com.superarilo.utils.*;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +61,7 @@ public class BlogGossipCommentImpl implements BlogGossipCommentService {
                 GossipComment gossipComment = new GossipComment();
                 gossipComment.setGossipId(gossipId);
                 gossipComment.setReplyUser(userId);
+                gossipComment.setByReplyCommentId(replyCommentId);
                 gossipComment.setCreateTime(new Date());
                 gossipComment.setContent(content);
                 if(blogGossipCommentMapper.queryGossipCommentIsHave(gossipId, replyCommentId, replyUserId)){
@@ -71,6 +74,37 @@ public class BlogGossipCommentImpl implements BlogGossipCommentService {
             }
         } else {
             return JsonResult.Error(404, "碎语不存在或者被删除");
+        }
+    }
+
+    @Override
+    public JsonResult commentLike(Long gossipId, Long commentId, HttpServletRequest request) {
+        Long uid = JWT.decode(request.getHeader("token")).getClaim("uid").asLong();
+        Map<String, Boolean> likeStatus = new HashMap<>();
+        if(blogGossipCommentLikeMapper.queryUserIsLike(commentId, uid)){
+            if(blogGossipCommentLikeMapper.cancelLikeComment(commentId, uid)){
+                likeStatus.put("status", false);
+                return JsonResult.OK("取消喜欢了咯 (´。＿。｀)", likeStatus);
+            } else {
+                likeStatus.put("status", false);
+                return JsonResult.Error(400, "没有找到记录", likeStatus);
+            }
+        } else {
+            GossipCommentLike commentLike = new GossipCommentLike();
+            commentLike.setCommentId(commentId);
+            commentLike.setUid(uid);
+            blogGossipCommentLikeMapper.insert(commentLike);
+            likeStatus.put("status", true);
+            return JsonResult.OK("喜欢成功，感谢你的点赞 (○｀ 3′○)", likeStatus);
+        }
+    }
+
+    @Override
+    public JsonResult deleteGossipCommentById(Long gossipId, Long commentId, HttpServletRequest request) {
+        if(blogGossipCommentMapper.deleteCommentById(gossipId, commentId, JWT.decode(request.getHeader("token")).getClaim("uid").asLong())) {
+            return JsonResult.OK("删除成功！");
+        } else {
+            return JsonResult.Error(400, "删除失败，服务器没有找到对应的资源！");
         }
     }
 }

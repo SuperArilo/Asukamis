@@ -20,6 +20,8 @@ public class ArticleComment {
     private Long replyUser;
     @TableField(value = "byReplyUser")
     private Long byReplyUser;
+    @TableField(value = "byReplyCommentId")
+    private Long byReplyCommentId;
     @TableField(value = "createTime")
     @JsonFormat(timezone = "GMT+8", pattern = DateUtil.YYYY_MM_DD_PATTERN)
     private Date createTime;

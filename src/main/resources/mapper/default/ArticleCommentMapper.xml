@@ -14,8 +14,9 @@
         </association>
         <association property="byReplyUser" javaType="java.util.Map">
             <id property="byReplyUserId" column="byReplyUserId"/>
-            <id property="byReplyName" column="byReplyName"/>
-            <id property="byReplyAvatar" column="byReplyAvatar"/>
+            <result property="byReplyName" column="byReplyName"/>
+            <result property="byReplyAvatar" column="byReplyAvatar"/>
+            <result property="byReplyCommentId" column="byReplyCommentId"/>
         </association>
     </resultMap>
     <select id="getArticleCommentList" resultMap="commentMap">
@@ -24,7 +25,8 @@
             bac.articleId,
             bac.createTime,
             bac.content,
-            (select count(*) from blog_comment_like_list as bcll where bcll.commentId = bac.commentId) as likes,
+            bac.byReplyCommentId,
+            (select count(*) from blog_article_comment_like_list as bacll where bacll.commentId = bac.commentId) as likes,
             reply_user.uid as replyUserId,
             reply_user.nickName as replyNickName,
             reply_user.avatar as replyAvatar,
@@ -38,8 +40,8 @@
         ORDER BY bac.createTime DESC
     </select>
     <delete id="deleteArticleCommentById">
-        DELETE blog_article_comment, blog_comment_like_list FROM blog_article_comment LEFT JOIN blog_comment_like_list
-        ON blog_article_comment.commentId = blog_comment_like_list.commentId and blog_article_comment.replyUser = blog_comment_like_list.uid and blog_article_comment.articleId = #{articleId}
+        DELETE blog_article_comment, blog_article_comment_like_list FROM blog_article_comment LEFT JOIN blog_article_comment_like_list
+        ON blog_article_comment.commentId = blog_article_comment_like_list.commentId and blog_article_comment.replyUser = blog_article_comment_like_list.uid and blog_article_comment.articleId = #{articleId}
         where blog_article_comment.commentId = #{commentId}
         and blog_article_comment.replyUser = #{userId}
     </delete>
@@ -54,8 +56,8 @@
     </select>
 
     <delete id="deleteArticleCommentByAdmin">
-        delete blog_article_comment, blog_comment_like_list from blog_article_comment left join blog_comment_like_list
-        on blog_article_comment.commentId = blog_comment_like_list.commentId and blog_article_comment.articleId = #{articleId}
+        delete blog_article_comment, blog_article_comment_like_list from blog_article_comment left join blog_article_comment_like_list
+        on blog_article_comment.commentId = blog_article_comment_like_list.commentId and blog_article_comment.articleId = #{articleId}
         where blog_article_comment.commentId in
         <foreach collection="commentId" item="item" separator="," open="(" close=")">
             #{item}

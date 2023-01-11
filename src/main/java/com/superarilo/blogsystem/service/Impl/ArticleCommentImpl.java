@@ -63,6 +63,7 @@ public class ArticleCommentImpl extends ServiceImpl<ArticleCommentMapper, Articl
                 ArticleComment articleComment = new ArticleComment();
                 articleComment.setArticleId(articleId);
                 articleComment.setReplyUser(userId);
+                articleComment.setByReplyCommentId(replyCommentId);
                 articleComment.setCreateTime(new Date());
                 articleComment.setContent(content);
                 if (articleCommentMapper.queryArtComment(articleId, replyCommentId, replyUserId)) {
