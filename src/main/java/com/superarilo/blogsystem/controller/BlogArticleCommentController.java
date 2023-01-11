@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/article/comment")
-public class ArtCommentController {
+public class BlogArticleCommentController {
     private final ArticleCommentService articleCommentService;
 
-    public ArtCommentController(ArticleCommentService articleCommentService) {
+    public BlogArticleCommentController(ArticleCommentService articleCommentService) {
         this.articleCommentService = articleCommentService;
     }
 
@@ -38,7 +38,7 @@ public class ArtCommentController {
         return articleCommentService.deleteArticleCommentById(articleId, commentId, request, response);
     }
     @PutMapping("/like")
-    public JsonResult artCommentLike(@RequestParam(value = "articleId") Long articleId,
+    public JsonResult articleCommentLike(@RequestParam(value = "articleId") Long articleId,
                                      @RequestParam(value = "commentId") Long commentId,
                                      HttpServletRequest request){
         return articleCommentService.commentLike(commentId, articleId, request);
